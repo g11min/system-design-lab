@@ -20,4 +20,9 @@ public class ProjectController {
     public Map<String, Object> getProject(@PathVariable long id) {
         return service.getProject(id);
     }
+
+    @GetMapping("/count")
+    public int count() {
+        return service.incrementCount();
+    }
 }
