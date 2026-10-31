@@ -57,4 +57,21 @@ public class AnalysisTask {
     public Instant getCreatedAt() {
         return createdAt;
     }
+
+    public void markRunning() {
+        if (status != TaskStatus.PENDING) {
+            throw new IllegalStateException("Only PENDING tasks can be claimed");
+        }
+
+        this.status = TaskStatus.RUNNING;
+        this.attempts++;
+    }
+
+    public void markSucceeded() {
+        if (status != TaskStatus.RUNNING) {
+            throw new IllegalStateException("Only RUNNING tasks can succeed");
+        }
+
+        this.status = TaskStatus.SUCCEEDED;
+    }
 }

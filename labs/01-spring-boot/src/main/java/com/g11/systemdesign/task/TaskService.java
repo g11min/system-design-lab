@@ -3,6 +3,7 @@ package com.g11.systemdesign.task;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -32,5 +33,23 @@ public class TaskService {
     @Transactional(readOnly = true)
     public List<AnalysisTask> getAllTasks() {
         return repository.findAll();
+    }
+
+    @Transactional
+    public Optional<AnalysisTask> claimNextTask() {
+        Optional<AnalysisTask> optional = repository.findNextPendingTask();
+        if (optional.isEmpty()) {
+            return Optional.empty();
+        }
+        AnalysisTask task = optional.get();
+        task.markRunning();
+        return Optional.of(task);
+    }
+
+    @Transactional
+    public void completeTask(Long taskId) {
+        AnalysisTask task = repository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Task not found: " + taskId));
+        task.markSucceeded();
     }
 }
